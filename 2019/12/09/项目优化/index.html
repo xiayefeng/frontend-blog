@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>记一次项目优化经历 | 前端技术分享</title>
+    <meta name="description" content="This is a blog example built by VuePress">
+    <link rel="icon" href="/frontend-blog/image/favicon.ico">
+    
+    <link rel="preload" href="/frontend-blog/assets/css/0.styles.67aef3eb.css" as="style"><link rel="preload" href="/frontend-blog/assets/js/app.319f6161.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/4.a47c9514.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/5.0063dd95.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/21.1c78d028.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/8.128e879f.js" as="script"><link rel="prefetch" href="/frontend-blog/assets/js/1.f7ad5984.js"><link rel="prefetch" href="/frontend-blog/assets/js/10.4874f259.js"><link rel="prefetch" href="/frontend-blog/assets/js/11.4f29cc9d.js"><link rel="prefetch" href="/frontend-blog/assets/js/12.e3d3f978.js"><link rel="prefetch" href="/frontend-blog/assets/js/13.17a43e04.js"><link rel="prefetch" href="/frontend-blog/assets/js/14.d0c84e3b.js"><link rel="prefetch" href="/frontend-blog/assets/js/15.afa0c810.js"><link rel="prefetch" href="/frontend-blog/assets/js/16.4aa2f973.js"><link rel="prefetch" href="/frontend-blog/assets/js/17.dc210d69.js"><link rel="prefetch" href="/frontend-blog/assets/js/18.f4b2f405.js"><link rel="prefetch" href="/frontend-blog/assets/js/19.c03aa698.js"><link rel="prefetch" href="/frontend-blog/assets/js/20.d5c9233c.js"><link rel="prefetch" href="/frontend-blog/assets/js/22.0ede5674.js"><link rel="prefetch" href="/frontend-blog/assets/js/23.a79e1364.js"><link rel="prefetch" href="/frontend-blog/assets/js/6.bb9d6bef.js"><link rel="prefetch" href="/frontend-blog/assets/js/7.7ed8ead5.js"><link rel="prefetch" href="/frontend-blog/assets/js/9.dd16b14c.js"><link rel="prefetch" href="/frontend-blog/assets/js/vuejs-paginate.d59c2378.js">
+    <link rel="stylesheet" href="/frontend-blog/assets/css/0.styles.67aef3eb.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="vuperess-theme-blog__global-layout"><section id="header-wrapper"><header id="header"><div class="header-wrapper"><div class="title"><a href="/frontend-blog/" class="nav-link home-link">前端技术分享
+        </a></div> <div class="header-right-wrap"><ul class="nav"><li class="nav-item"><a href="/frontend-blog/" class="nav-link">随笔</a></li><li class="nav-item"><a href="/frontend-blog/tag/" class="nav-link">分类</a></li><li class="nav-item"><a href="/frontend-blog/about/" class="nav-link">关于我</a></li></ul> <div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div></div></div></header></section> <div id="mobile-header"><div class="mobile-header-bar"><div class="mobile-header-title"><a href="/frontend-blog/" class="nav-link mobile-home-link">前端技术分享
+      </a> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div> <div class="mobile-menu-wrapper"><hr class="menu-divider"> <ul class="mobile-nav"><li class="mobile-nav-item"><a href="/frontend-blog/" class="nav-link">随笔</a></li><li class="mobile-nav-item"><a href="/frontend-blog/tag/" class="nav-link">分类</a></li><li class="mobile-nav-item"><a href="/frontend-blog/about/" class="nav-link">关于我</a></li></ul></div></div></div> <div class="content-wrapper"><div id="vuperess-theme-blog__post-layout"><div class="vuepress-blog-theme-content"><div class="content__default"><h1 id="记一次项目优化经历"><a href="#记一次项目优化经历" class="header-anchor">#</a> 记一次项目优化经历</h1> <p>项目优化，可谓仁者见仁智者见智，不同的项目应根据项目的特点有针对性的优化，本篇以 vue spa 为例记录优化过程,以飨读者。<br>
+先说优化背景，最近在做一个实时视频的功能。用的腾讯的实时视频 TRTC sdk 及 IM sdk，由于是安卓端和 PC 端视频，安卓端需求多，web 端需求少，所以web端一周开发完毕，有足够多的时间去优化。期间也踩了不少坑，还算顺利。需要提醒下各位朋友的是，如果做 web 端实时视频，网站一定要用 https 证书，因为web端视屏通话用了最新的浏览器 API，navigator.mediaDevices.enumerateDevices() ，此 API 在 http 环境下会报错，https 下就可以正常使用。开发期间出现了，本地 demo 可以跑通，丢到服务器访问就报错的问题。官方文档也没有明确说明，耽误了不少时间。<br>
+web端开发完成了，暂时没事干就开始优化(摸鱼)，优化是参照 webpack 插件webpack-bundle-analyzer 打包结果分析的<a href="https://xiayefeng.github.io/frontend-blog/2019/11/16/mylayout/" target="_blank" rel="noopener noreferrer">关于webpack打包分析可以看我这篇博客<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> 。启动依赖图一看由于新引入了 trtc-js-sdk、cos-js-sdk-v5 和 tim-js-sdk 三个依赖，项目最大的 js 包压缩后大小都超过 1M 了,孰能忍。由于项目有登录页，就考虑在页面加载完成后就加载相关依赖，来提高用户体验，减少等待时间。到官网下载好js,准备开始。
+<br></p> <p>1、webpack 配置依赖外置</p> <div class="language-js extra-class"><pre class="language-js"><code>  externals<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+  <span class="token string">'vue'</span><span class="token punctuation">:</span> <span class="token string">'Vue'</span><span class="token punctuation">,</span>
+  <span class="token string">'element-ui'</span><span class="token punctuation">:</span> <span class="token string">'ELEMENT'</span><span class="token punctuation">,</span>
+  <span class="token string">'xlsx'</span><span class="token punctuation">:</span> <span class="token string">'XLSX'</span><span class="token punctuation">,</span>
+  <span class="token string">'trtc-js-sdk'</span><span class="token punctuation">:</span> <span class="token string">'TRTC'</span><span class="token punctuation">,</span>
+  <span class="token string">'tim-js-sdk'</span><span class="token punctuation">:</span> <span class="token string">'TIM'</span><span class="token punctuation">,</span>
+  <span class="token string">'cos-js-sdk-v5'</span><span class="token punctuation">:</span> <span class="token string">'COS'</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><p>2、在 webpack 目录下 cdn.js 中添加依赖，如下参考</p> <div class="language-js extra-class"><pre class="language-js"><code>module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  dev<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    css<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">'https://cdn.bootcss.com/element-ui/2.12.0/theme-chalk/index.css'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    js<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  prod<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    css<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">'https://cdn.bootcss.com/element-ui/2.12.0/theme-chalk/index.css'</span><span class="token punctuation">]</span><span class="token punctuation">,</span>
+    js<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+      <span class="token string">'https://cdn.bootcss.com/vue/2.6.10/vue.min.js'</span><span class="token punctuation">,</span>
+      <span class="token string">'https://cdn.bootcss.com/element-ui/2.12.0/index.js'</span><span class="token punctuation">,</span>
+      <span class="token string">'/static/js/load-js-v1.0.0.js'</span>
+    <span class="token punctuation">]</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>视频相关三个依赖统一放到 load-js 里加载,load-js 内容如下：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">;</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">win<span class="token punctuation">,</span> doc</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  win<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+    <span class="token string">'load'</span><span class="token punctuation">,</span>
+    <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">var</span> timSDK <span class="token operator">=</span> <span class="token string">'/static/js/tim-js-v2.2.1.js'</span>
+      <span class="token keyword">var</span> trtcSDK <span class="token operator">=</span> <span class="token string">'/static/js/trtc-v4.3.1.js'</span>
+      <span class="token keyword">var</span> cosSDK <span class="token operator">=</span> <span class="token string">'/static/js/cos-js-sdk-v5-v0.5.22.js'</span>
+
+      <span class="token function">addScript</span><span class="token punctuation">(</span>timSDK<span class="token punctuation">)</span>
+      <span class="token function">addScript</span><span class="token punctuation">(</span>cosSDK<span class="token punctuation">)</span>
+      <span class="token function">addScript</span><span class="token punctuation">(</span>trtcSDK<span class="token punctuation">)</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token boolean">false</span>
+  <span class="token punctuation">)</span>
+
+  <span class="token keyword">function</span> <span class="token function">addScript</span><span class="token punctuation">(</span><span class="token parameter">url</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> script <span class="token operator">=</span> doc<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'script'</span><span class="token punctuation">)</span>
+    script<span class="token punctuation">.</span>src <span class="token operator">=</span> url
+    doc<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>script<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> script
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">(</span>window<span class="token punctuation">,</span> document<span class="token punctuation">)</span>
+</code></pre></div><p>3、在webpack中使用</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token keyword">const</span> cdn <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./cdn'</span><span class="token punctuation">)</span>
+<span class="token keyword">new</span> <span class="token class-name">HtmlWebpackPlugin</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  <span class="token operator">...</span>
+  cdn<span class="token punctuation">:</span> cdn<span class="token punctuation">.</span>prod
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>4、在html注入依赖
+因为 html-webpack-plugin 支持lodsah模板字符串，所以可以在html模板中使用 lodash template 语法，参考如下：</p> <div class="language-html extra-class"><pre class="language-html"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+  &lt;% if(htmlWebpackPlugin.options.cdn) {%&gt; 
+    &lt;% for(let css of htmlWebpackPlugin.options.cdn.css) { %&gt;
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>stylesheet<span class="token punctuation">&quot;</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>&lt;%=css%&gt;<span class="token punctuation">&quot;</span></span> <span class="token punctuation">/&gt;</span></span>
+    &lt;% } %&gt;
+  &lt;% } %&gt;
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+  &lt;% if(htmlWebpackPlugin.options.cdn) {%&gt;
+      &lt;% for(let js of htmlWebpackPlugin.options.cdn.js) { %&gt;
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>&lt;%=js%&gt;<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+      &lt;% } %&gt;
+  &lt;% } %&gt;
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><p>注：在步骤 2 中，公司有 cdn 就用公司 cdn，没有的话就放服务下访问好，免费的 cdn 不敢用，一旦出问题这个锅背不起<br></p> <p>在这个过程中遇到一点小问题，在页面进入系统，没问题，很完美，但是刷新页面后 js 就报错,tim 依赖找不到，原因定位是tim.js 依赖还没有加载就调用 tim.js，因为使用了 window.onload 事件。然后想到 import() 懒加载相关依赖。但是怎么知道 trtc 依赖已经加载完，最后通过 new Event 自定义事件完美解决(有兼容性问题，但实时视频要求使用 chrome浏览器 且版本不低于 72 所以这个问题可以忽略)，load-js最终代码如下：</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token punctuation">;</span><span class="token punctuation">(</span><span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">win<span class="token punctuation">,</span> doc</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  win<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span>
+    <span class="token string">'load'</span><span class="token punctuation">,</span>
+    <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+      <span class="token keyword">var</span> timSDK <span class="token operator">=</span> <span class="token string">'/static/js/tim-js-v2.2.1.js'</span>
+      <span class="token keyword">var</span> trtcSDK <span class="token operator">=</span> <span class="token string">'/static/js/trtc-v4.3.1.js'</span>
+      <span class="token keyword">var</span> cosSDK <span class="token operator">=</span> <span class="token string">'/static/js/cos-js-sdk-v5-v0.5.22.js'</span>
+
+      <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token keyword">typeof</span> Event <span class="token operator">==</span> <span class="token string">'object'</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token comment">// 跳过IE浏览器</span>
+        <span class="token keyword">return</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token keyword">var</span> myUtilEvent <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Event</span><span class="token punctuation">(</span><span class="token string">'jsLoadComplete'</span><span class="token punctuation">)</span> <span class="token comment">// 注册自定义事件</span>
+      <span class="token keyword">var</span> root <span class="token operator">=</span> doc<span class="token punctuation">.</span>body
+      <span class="token keyword">var</span> tim <span class="token operator">=</span> <span class="token function">addScript</span><span class="token punctuation">(</span>timSDK<span class="token punctuation">)</span>
+      <span class="token keyword">var</span> cos <span class="token operator">=</span> <span class="token function">addScript</span><span class="token punctuation">(</span>cosSDK<span class="token punctuation">)</span>
+      <span class="token keyword">var</span> trtc <span class="token operator">=</span> <span class="token function">addScript</span><span class="token punctuation">(</span>trtcSDK<span class="token punctuation">)</span>
+
+      trtc<span class="token punctuation">.</span><span class="token function-variable function">onload</span> <span class="token operator">=</span> <span class="token keyword">function</span><span class="token punctuation">(</span><span class="token parameter">e</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        root<span class="token punctuation">.</span><span class="token function">dispatchEvent</span><span class="token punctuation">(</span>myUtilEvent<span class="token punctuation">)</span> <span class="token comment">// 在body上触发自定义事件</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token boolean">false</span>
+  <span class="token punctuation">)</span>
+
+  <span class="token keyword">function</span> <span class="token function">addScript</span><span class="token punctuation">(</span><span class="token parameter">url</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">var</span> script <span class="token operator">=</span> doc<span class="token punctuation">.</span><span class="token function">createElement</span><span class="token punctuation">(</span><span class="token string">'script'</span><span class="token punctuation">)</span>
+    script<span class="token punctuation">.</span>src <span class="token operator">=</span> url
+    doc<span class="token punctuation">.</span>body<span class="token punctuation">.</span><span class="token function">appendChild</span><span class="token punctuation">(</span>script<span class="token punctuation">)</span>
+    <span class="token keyword">return</span> script
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">(</span>window<span class="token punctuation">,</span> document<span class="token punctuation">)</span>
+</code></pre></div><p>由于刷新和正常加载走的不同的逻辑，需要一个存 sessionStorage 作为区分标志，采取不同的加载策略,vue 代码如下:</p> <div class="language-js extra-class"><pre class="language-js"><code><span class="token comment">// 在created生命周期中</span>
+<span class="token keyword">var</span> isReload <span class="token operator">=</span> sessionStorage<span class="token punctuation">.</span><span class="token function">getItem</span><span class="token punctuation">(</span>sessionKey<span class="token punctuation">.</span>isReload<span class="token punctuation">)</span> <span class="token comment">// 区分是否刷新存一个sessionStorage 作为判断依据</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>isReload<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">initVedio</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  sessionStorage<span class="token punctuation">.</span><span class="token function">setItem</span><span class="token punctuation">(</span>sessionKey<span class="token punctuation">.</span>isReload<span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+  <span class="token keyword">this</span><span class="token punctuation">.</span><span class="token function">$nextTick</span><span class="token punctuation">(</span><span class="token keyword">function</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> root <span class="token operator">=</span> document<span class="token punctuation">.</span>body
+    root<span class="token punctuation">.</span><span class="token function">addEventListener</span><span class="token punctuation">(</span><span class="token string">'jsLoadComplete'</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>initVedio<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">)</span> <span class="token comment">// 监听body自定义事件</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">// methods 方法</span>
+<span class="token function">initVedio</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  <span class="token keyword">import</span><span class="token punctuation">(</span><span class="token string">'@/view/consultDoctor/im'</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">then</span><span class="token punctuation">(</span><span class="token parameter">obj</span> <span class="token operator">=&gt;</span> <span class="token punctuation">{</span>
+    <span class="token operator">...</span>
+      obj<span class="token punctuation">.</span><span class="token function">createIM</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">// 在回调里调用依赖的方法</span>
+    <span class="token operator">...</span>  
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token keyword">let</span> isReload <span class="token operator">=</span> sessionStorage<span class="token punctuation">.</span><span class="token function">getItem</span><span class="token punctuation">(</span>sessionKey<span class="token punctuation">.</span>isReload<span class="token punctuation">)</span> 
+  <span class="token keyword">if</span> <span class="token punctuation">(</span>isReload<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">let</span> root <span class="token operator">=</span> document<span class="token punctuation">.</span>body
+    root<span class="token punctuation">.</span><span class="token function">removeEventListener</span><span class="token punctuation">(</span><span class="token string">'jsLoadComplete'</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">.</span>initVedio<span class="token punctuation">)</span> <span class="token comment">// 触发后移除自定义事件</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><p>通过以上一顿骚操作之后，再打包看依赖图，最大的js文件压缩后只有350kb左右,开启gizp压缩后只有100kb,对于PC端来说是一个可以接受的范围。说明优化见效果了。</p> <p>总结：项目优化，有很多方向，比如首屏优化，本案例也涉到，例如等页面加载完成，再加载相关依赖。缓存优化，依赖按需加载，依赖懒加载，图片懒加载等等。具体的项目可以根据实际的需求灵活选择。需要说的是项目优化要以实际项目运行数据为基准，任何过度的优化都可能适得其反。最终以项目资源加载速度，耗时，以及用户体验的流畅度作为评判标准。望每个前端工程师都能写出用户体验极棒的项目。各位大神若有高见欢迎后台留言交流切磋。以上，谢谢！</p> <p>参考资料：<br> <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event/Event" target="_blank" rel="noopener noreferrer">MDN Event<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a> <br> <a href="https://github.com/jantimon/html-webpack-plugin" target="_blank" rel="noopener noreferrer">html-webpack-plugin<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></p> <div class="update-time" data-v-2505a5c6>
+   最后更新： 7 个月前
+</div></div> <hr> <!----></div> <!----></div></div> <footer class="footer" data-v-0d113134><div class="footer-left-wrap" data-v-0d113134><ul class="contact" data-v-0d113134><li class="contact-item" data-v-0d113134><a href="https://github.com/xiayefeng" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-0d113134><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github" data-v-0d113134><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" data-v-0d113134></path></svg>
+          
+        </a></li><li class="contact-item" data-v-0d113134><a href="https://www.linkedin.com/in/xiayefeng" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-0d113134><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-linkedin" data-v-0d113134><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" data-v-0d113134></path><rect x="2" y="9" width="4" height="12" data-v-0d113134></rect><circle cx="4" cy="4" r="2" data-v-0d113134></circle></svg>
+          
+        </a></li></ul></div> <div class="footer-right-wrap" data-v-0d113134><ul class="copyright" data-v-0d113134><li class="copyright-item" data-v-0d113134><a href="https://policies.google.com/privacy?hl=en-US" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-0d113134>Privacy Policy</a></li><li class="copyright-item" data-v-0d113134><a href="/frontend-blog/2019/12/09/%E9%A1%B9%E7%9B%AE%E4%BC%98%E5%8C%96/.html" class="nav-link" data-v-0d113134>MIT Licensed | Copyright © 2018-present Vue.js</a></li></ul></div></footer></div><div class="global-ui"><!----></div></div>
+    <script src="/frontend-blog/assets/js/app.319f6161.js" defer></script><script src="/frontend-blog/assets/js/4.a47c9514.js" defer></script><script src="/frontend-blog/assets/js/5.0063dd95.js" defer></script><script src="/frontend-blog/assets/js/21.1c78d028.js" defer></script><script src="/frontend-blog/assets/js/8.128e879f.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>webpack 学习笔记 | 前端技术分享</title>
+    <meta name="description" content="This is a blog example built by VuePress">
+    <link rel="icon" href="/frontend-blog/image/favicon.ico">
+    
+    <link rel="preload" href="/frontend-blog/assets/css/0.styles.67aef3eb.css" as="style"><link rel="preload" href="/frontend-blog/assets/js/app.319f6161.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/4.a47c9514.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/5.0063dd95.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/19.c03aa698.js" as="script"><link rel="preload" href="/frontend-blog/assets/js/8.128e879f.js" as="script"><link rel="prefetch" href="/frontend-blog/assets/js/1.f7ad5984.js"><link rel="prefetch" href="/frontend-blog/assets/js/10.4874f259.js"><link rel="prefetch" href="/frontend-blog/assets/js/11.4f29cc9d.js"><link rel="prefetch" href="/frontend-blog/assets/js/12.e3d3f978.js"><link rel="prefetch" href="/frontend-blog/assets/js/13.17a43e04.js"><link rel="prefetch" href="/frontend-blog/assets/js/14.d0c84e3b.js"><link rel="prefetch" href="/frontend-blog/assets/js/15.afa0c810.js"><link rel="prefetch" href="/frontend-blog/assets/js/16.4aa2f973.js"><link rel="prefetch" href="/frontend-blog/assets/js/17.dc210d69.js"><link rel="prefetch" href="/frontend-blog/assets/js/18.f4b2f405.js"><link rel="prefetch" href="/frontend-blog/assets/js/20.d5c9233c.js"><link rel="prefetch" href="/frontend-blog/assets/js/21.1c78d028.js"><link rel="prefetch" href="/frontend-blog/assets/js/22.0ede5674.js"><link rel="prefetch" href="/frontend-blog/assets/js/23.a79e1364.js"><link rel="prefetch" href="/frontend-blog/assets/js/6.bb9d6bef.js"><link rel="prefetch" href="/frontend-blog/assets/js/7.7ed8ead5.js"><link rel="prefetch" href="/frontend-blog/assets/js/9.dd16b14c.js"><link rel="prefetch" href="/frontend-blog/assets/js/vuejs-paginate.d59c2378.js">
+    <link rel="stylesheet" href="/frontend-blog/assets/css/0.styles.67aef3eb.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div id="vuperess-theme-blog__global-layout"><section id="header-wrapper"><header id="header"><div class="header-wrapper"><div class="title"><a href="/frontend-blog/" class="nav-link home-link">前端技术分享
+        </a></div> <div class="header-right-wrap"><ul class="nav"><li class="nav-item"><a href="/frontend-blog/" class="nav-link">随笔</a></li><li class="nav-item"><a href="/frontend-blog/tag/" class="nav-link">分类</a></li><li class="nav-item"><a href="/frontend-blog/about/" class="nav-link">关于我</a></li></ul> <div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div></div></div></header></section> <div id="mobile-header"><div class="mobile-header-bar"><div class="mobile-header-title"><a href="/frontend-blog/" class="nav-link mobile-home-link">前端技术分享
+      </a> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></div> <div class="mobile-menu-wrapper"><hr class="menu-divider"> <ul class="mobile-nav"><li class="mobile-nav-item"><a href="/frontend-blog/" class="nav-link">随笔</a></li><li class="mobile-nav-item"><a href="/frontend-blog/tag/" class="nav-link">分类</a></li><li class="mobile-nav-item"><a href="/frontend-blog/about/" class="nav-link">关于我</a></li></ul></div></div></div> <div class="content-wrapper"><div id="vuperess-theme-blog__post-layout"><div class="vuepress-blog-theme-content"><div class="content__default"><h1 id="webpack-学习笔记"><a href="#webpack-学习笔记" class="header-anchor">#</a> webpack 学习笔记</h1> <p>本文将从webpack代码分割，和webpack打包速度优化两个方面讲解webpack的使用技巧，用作个人笔记同时可供他人参考，文中若有不对的地方，还欢迎各位大神斧正。谢谢!</p> <h2 id="代码分割的作用"><a href="#代码分割的作用" class="header-anchor">#</a> 代码分割的作用</h2> <ul><li>减少加载代码大小</li> <li>公共依赖提取</li> <li>首屏优化
+对于不同的项目采用不同的优化技巧，本文档就作者亲历的项目经验，谈谈代码分割优，首屏优化等方面的心得。
+先说说遇到的问题吧，当时项目打包完，发现vendor.js有800K,app.js也有400-500k,maifest倒是不大也就20k左右。根据webpack-bundle-analyzer 的分析依赖图就开始着手优化，发现vendor.js里 element-ui依赖就占了500k以上，着实吓一跳。下定决心优化。最初想到的是按需加载element-ui相关依赖，最后发现实在是太多了，项目中也不确定那个组件用了，那个组件没用。一个一个找确实费时间。最终选泽了 依赖外置的方式，即通过配置 externals 选项将element-ui依赖外置。当然发现vue也必须外置，就一起做了参考如下</li></ul> <div class="language-html extra-class"><pre class="language-html"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>https://cdn.bootcss.com/element-ui/2.12.0/theme-chalk/index.css<span class="token punctuation">&quot;</span></span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>stylesheet<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span>
+...
+
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>https://cdn.bootcss.com/vue/2.6.10/vue.min.js<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>script</span> <span class="token attr-name">src</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">&quot;</span>https://cdn.bootcss.com/element-ui/2.12.0/index.js<span class="token punctuation">&quot;</span></span><span class="token punctuation">&gt;</span></span><span class="token script"></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>script</span><span class="token punctuation">&gt;</span></span>
+</code></pre></div><div class="language-js extra-class"><pre class="language-js"><code>  externals<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">'vue'</span><span class="token punctuation">:</span> <span class="token string">'Vue'</span><span class="token punctuation">,</span>
+    <span class="token string">'element-ui'</span><span class="token punctuation">:</span> <span class="token string">'ELEMENT'</span><span class="token punctuation">,</span>
+    <span class="token string">'xlsx'</span><span class="token punctuation">:</span> <span class="token string">'XLSX'</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+</code></pre></div><p>同时有必要说一下，xlsx依赖，由于写在html里的js就是首屏显示就加载的，考虑到xlsx依赖比较大，还有项目中用到的不多，就采用了异步加载，再进入到相关页面，然后动态插入js的形式引入，同时js还可以缓存下来，下次访问时，提高网站访问速度。起到了一定的优化作用。
+最近也学到一些webpack4的代码分割技巧，记录下来，以备需要时使用。配置参考如下</p> <div class="language-js extra-class"><pre class="language-js"><code>  optimization<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    miniize<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">// production 默认为true 不用配置  代码压缩</span>
+    splitChunks<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      chunks<span class="token punctuation">:</span> <span class="token string">'initial'</span><span class="token punctuation">,</span>  <span class="token comment">// initial 入口，all 所有, async 异步</span>
+      minSize<span class="token punctuation">:</span> <span class="token number">10000</span><span class="token punctuation">,</span> <span class="token comment">// 默认 30000， 即30kb</span>
+      cacheGroups<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+        <span class="token comment">/* model: {
+          test: /model/  // 提取指定模块
+        } */</span>
+        vendors<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+          test<span class="token punctuation">:</span> <span class="token regex">/([\\/]node_modules[\//])/</span><span class="token punctuation">,</span>
+          name<span class="token punctuation">:</span> <span class="token string">'vendor'</span><span class="token punctuation">,</span>
+          chunks<span class="token punctuation">:</span> <span class="token string">'all'</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    runtimeChunk<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> <span class="token comment">// 提取webpack 运行文件</span>
+  <span class="token punctuation">}</span>
+</code></pre></div><p>单页面优化主要是异步加载，可以是组件或者数据等等，通过 import('***') 实现异步加载，有必要说的一点是，在写模块文件时推荐使用 es6 的 import 和 export ,因为 tree shaking 仅支持es6 模块语法，为了减少项目中不必要的代码，推荐如此。</p> <h2 id="webpack打包速度优化"><a href="#webpack打包速度优化" class="header-anchor">#</a> webpack打包速度优化</h2> <p>通过可视化的打包分析，可以帮助我们找到项目打包时的瓶颈所在，有针对性的优化，对症下药。介绍两种打包结果分析方法：</p> <h3 id="webpack打包结果分析"><a href="#webpack打包结果分析" class="header-anchor">#</a> webpack打包结果分析</h3> <blockquote><p>官方版本 <br>
+配合 webpack.github.io/analyse/ 网址使用 <br> <br>
+Mac: webpack --profile --json &gt; stats.json <br>
+Window: webpack --profile --json | Out-file 'stats.json' -Encoding OEM
+<br></p></blockquote> <hr> <blockquote><p>-- 社区版本 <br>
+插件： webpack-bundle-analyzer</p></blockquote> <p>打包速度优化的着手点</p> <ul><li>减少依赖嵌套深度</li> <li>使用尽可能少的处理</li> <li>Dll 处理</li> <li>不必要的文件，让loader忽略</li> <li>HappyPack</li> <li>Uglify 优化</li></ul> <p>减少依赖嵌套深度是指，在组织文件时尽可能的扁平化，目录不要太深降低依赖分析查找的时间; 尽可能少的处理，是指去除不必要的webpack加工，例如雪碧图，autoprefixer 等等，可根据实际项目需求，多一项处理，对webpack来说，可能就是增加了打包时间。
+dll 处理可以参考如下配置，主要作用是将第三方依赖提前打包，和业务文件分离，减少业务文件的打包速度</p> <div class="language-js extra-class"><pre class="language-js"><code>
+<span class="token comment">// webpack.dll.js  执行打包文件，提前打包</span>
+<span class="token keyword">const</span> webpack <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'webapck'</span><span class="token punctuation">)</span>
+module<span class="token punctuation">.</span>exports <span class="token operator">=</span> <span class="token punctuation">{</span>
+  entry<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    jquery<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">'jquery'</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token comment">// 必须是一个数组</span>
+    loadsh<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token string">'lodash'</span><span class="token punctuation">]</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  output<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    path<span class="token punctuation">:</span> __dirname <span class="token operator">+</span> <span class="token string">'src/dll'</span><span class="token punctuation">,</span>
+    filename<span class="token punctuation">:</span> <span class="token string">'./[name].js'</span><span class="token punctuation">,</span>
+    library<span class="token punctuation">:</span> <span class="token string">'[name]'</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  plugins<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+    <span class="token keyword">new</span> <span class="token class-name">webpack<span class="token punctuation">.</span>DllPlugin</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+      path<span class="token punctuation">:</span> __dirname <span class="token operator">+</span> <span class="token string">'/src/dll/[name].json'</span><span class="token punctuation">,</span>
+      name<span class="token punctuation">:</span> <span class="token string">'[name]'</span>
+    <span class="token punctuation">}</span><span class="token punctuation">)</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+
+
+<span class="token comment">// webpack.config.js  将打包好文件和项目关联</span>
+
+<span class="token keyword">new</span> <span class="token class-name">webpack<span class="token punctuation">.</span>DllReferencePlugin</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  manifest<span class="token punctuation">:</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./src/dll/jquery.json'</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token keyword">new</span> <span class="token class-name">webpack<span class="token punctuation">.</span>DllReferencePlugin</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  manifest<span class="token punctuation">:</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'./src/dll/lodash.json'</span><span class="token punctuation">)</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+</code></pre></div><p>loader忽略，主要是通过配置，各种loader include(包含), 和 exclude(排除) 目录或文件来提高打包速度。</p> <p>HppyPack是通过开启多个线程提高打包速度的配置示例如下:</p> <div class="language-js extra-class"><pre class="language-js"><code>
+<span class="token operator">...</span>
+<span class="token keyword">const</span> HappyPack <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'happypack'</span><span class="token punctuation">)</span>
+<span class="token keyword">const</span> os <span class="token operator">=</span> <span class="token function">require</span><span class="token punctuation">(</span><span class="token string">'os'</span><span class="token punctuation">)</span> <span class="token comment">// 线程池  node自带</span>
+<span class="token keyword">const</span> happypackThreadPool <span class="token operator">=</span> HappyPack<span class="token punctuation">.</span><span class="token function">ThreadPool</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  size<span class="token punctuation">:</span> os<span class="token punctuation">.</span><span class="token function">cpus</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span>length
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+<span class="token operator">...</span>
+
+<span class="token punctuation">{</span>
+  test<span class="token punctuation">:</span> <span class="token regex">/\.js$/</span><span class="token punctuation">,</span>
+  loader<span class="token punctuation">:</span> <span class="token string">'happypack/loader?id=happyBabel'</span><span class="token punctuation">,</span> <span class="token comment">// 替换掉 babel-loader</span>
+  include<span class="token punctuation">:</span> <span class="token punctuation">[</span><span class="token function">resolve</span><span class="token punctuation">(</span><span class="token string">'src'</span><span class="token punctuation">)</span><span class="token punctuation">]</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">new</span> <span class="token class-name">HappyPack</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+  id<span class="token punctuation">:</span> <span class="token string">'happyBabel'</span><span class="token punctuation">,</span>
+  loaders<span class="token punctuation">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      loader<span class="token punctuation">:</span> <span class="token string">'babel-loader?cacheDirectory'</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  threadPool<span class="token punctuation">:</span> happypackThreadPool <span class="token comment">// 线程池</span>
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+
+</code></pre></div><p>Uglify 优化是 针对webpack3的，通过开启压缩缓存提高打包速度,webpack4已经自动做了优化, 实例配置如下:</p> <div class="language-js extra-class"><pre class="language-js"><code>  <span class="token keyword">new</span> <span class="token class-name">UglifyJsPlugin</span><span class="token punctuation">(</span><span class="token punctuation">{</span>
+    uglifyOptions<span class="token punctuation">:</span> <span class="token punctuation">{</span>
+      warning<span class="token punctuation">:</span> <span class="token boolean">false</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    parallel<span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+    cache<span class="token punctuation">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span><span class="token punctuation">)</span>
+</code></pre></div><p>以上欢迎各位交流提出不足，后续有好的想法或实践会继续更新,谢谢！</p> <div class="update-time" data-v-2505a5c6>
+   最后更新： 7 个月前
+</div></div> <hr> <!----></div> <div class="sticker vuepress-toc"><div class="vuepress-toc-item vuepress-toc-h2 active"><a href="#代码分割的作用" title="代码分割的作用">代码分割的作用</a></div><div class="vuepress-toc-item vuepress-toc-h2"><a href="#webpack打包速度优化" title="webpack打包速度优化">webpack打包速度优化</a></div><div class="vuepress-toc-item vuepress-toc-h3"><a href="#webpack打包结果分析" title="webpack打包结果分析">webpack打包结果分析</a></div></div></div></div> <footer class="footer" data-v-0d113134><div class="footer-left-wrap" data-v-0d113134><ul class="contact" data-v-0d113134><li class="contact-item" data-v-0d113134><a href="https://github.com/xiayefeng" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-0d113134><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github" data-v-0d113134><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" data-v-0d113134></path></svg>
+          
+        </a></li><li class="contact-item" data-v-0d113134><a href="https://www.linkedin.com/in/xiayefeng" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-0d113134><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-linkedin" data-v-0d113134><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" data-v-0d113134></path><rect x="2" y="9" width="4" height="12" data-v-0d113134></rect><circle cx="4" cy="4" r="2" data-v-0d113134></circle></svg>
+          
+        </a></li></ul></div> <div class="footer-right-wrap" data-v-0d113134><ul class="copyright" data-v-0d113134><li class="copyright-item" data-v-0d113134><a href="https://policies.google.com/privacy?hl=en-US" target="_blank" rel="noopener noreferrer" class="nav-link external" data-v-0d113134>Privacy Policy</a></li><li class="copyright-item" data-v-0d113134><a href="/frontend-blog/2019/11/16/mylayout/.html" class="nav-link" data-v-0d113134>MIT Licensed | Copyright © 2018-present Vue.js</a></li></ul></div></footer></div><div class="global-ui"><!----></div></div>
+    <script src="/frontend-blog/assets/js/app.319f6161.js" defer></script><script src="/frontend-blog/assets/js/4.a47c9514.js" defer></script><script src="/frontend-blog/assets/js/5.0063dd95.js" defer></script><script src="/frontend-blog/assets/js/19.c03aa698.js" defer></script><script src="/frontend-blog/assets/js/8.128e879f.js" defer></script>
+  </body>
+</html>
